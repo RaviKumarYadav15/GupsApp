@@ -27,7 +27,6 @@ const Home = () => {
     socket.on("newMessage", (newMessage)=>{
       dispatch(addNewMessage(newMessage));
     })
-
     return () => {
       socket.close();
     }
