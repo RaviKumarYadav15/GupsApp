@@ -19,10 +19,10 @@ const ChatCard = ({ chat, currentUserId }) => {
     isOnline = false;
   }
   else {
-    const otherUser = chat.participants.find(p => p._id !== currentUserId);
+    const otherUser = chat.participants?.find(p => p._id !== currentUserId);
     if (!otherUser) return null;
 
-    displayName = otherUser.fullname;
+    displayName = otherUser.fullName;
     displayAvatar = otherUser.avatar || "/default_user.png";
     subText = otherUser.username;
     isOnline = onlineUsers.includes(otherUser._id);
@@ -31,7 +31,6 @@ const ChatCard = ({ chat, currentUserId }) => {
   const handleSelect = () => {
       dispatch(selectChat(chat));
   };
-
   return (
     <div
       onClick={handleSelect}
