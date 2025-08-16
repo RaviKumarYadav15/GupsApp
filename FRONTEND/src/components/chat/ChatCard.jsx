@@ -7,7 +7,6 @@ const ChatCard = ({ chat, currentUserId }) => {
   const { selectedChat } = useSelector(state => state.chat);
   const { onlineUsers } = useSelector(state => state.socket);
 
-  const lastSelectedChat = useRef(null);
   const isSelected = selectedChat?._id == chat._id;
 
 
@@ -30,12 +29,7 @@ const ChatCard = ({ chat, currentUserId }) => {
   }
 
   const handleSelect = () => {
-    if (lastSelectedChat.current?._id !== chat._id) {
       dispatch(selectChat(chat));
-      lastSelectedChat.current = chat;
-    }
-    // prevents re-dispatch if same chat 
-    // is clicked repeatedly
   };
 
   return (

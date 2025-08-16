@@ -30,10 +30,14 @@ const ChatWindow = () => {
   useEffect(()=>{
     if(!socket || !selectedChat?._id) return;
 
-    if(prevChatRef.current){
-      socket.emit("leaveChat",prevChatRef.current);             
-      //leaving the previous joined chat
+    // if(prevChatRef.current){
+    //   socket.emit("leaveChat",prevChatRef.current);             
+    //   //leaving the previous joined chat
+    // }
+    if(prevChatRef.current && prevChatRef.current !== selectedChat._id){
+      socket.emit("leaveChat", prevChatRef.current);
     }
+
 
     socket.emit("joinChat", selectedChat._id);
     prevChatRef.current = selectedChat._id
@@ -58,7 +62,6 @@ const ChatWindow = () => {
     };
   },[socket,selectedChat,dispatch]);
   
-  console.log(selectedChat);
   const currentTypingUsersName = (typingUsers[selectedChat?._id] || []).map((id)=>{
     const user = selectedChat?.participants?.find(u => u._id === id);
     return user ? user.username: "Anonymous";

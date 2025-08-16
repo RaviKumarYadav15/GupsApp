@@ -15,12 +15,12 @@ io.on("connection", (socket)=>{
     const userId = socket.handshake.query.userId;
     if(!userId) return ;
 
-    
-    userSocketMap[userId] = socket.id;
-    io.emit("onlineUsers", Object.keys(userSocketMap))
+        userSocketMap[userId] = socket.id;
+        io.emit("onlineUsers", Object.keys(userSocketMap));
     
     socket.on("joinChat", (chatId) => {
         socket.join(chatId);
+        console.log(`User ${userId} joined chat ${chatId}`);
     });
 
     socket.on("leaveChat", (chatId) => {
