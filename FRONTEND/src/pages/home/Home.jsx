@@ -1,9 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
 import Sidebar from '../../components/sidebar/Sidebar';
 import ChatWindow from '../../components/chat/ChatWindow.jsx';
-
 import { initializeSocket, setOnlineUsers } from '../../features/socket/socketSlice.js';
 import { addNewMessage } from '../../features/message/messageSlice.js';
 
@@ -39,6 +37,4 @@ const Home = () => {
     </div>
   );
 };
-
-
 export default Home;

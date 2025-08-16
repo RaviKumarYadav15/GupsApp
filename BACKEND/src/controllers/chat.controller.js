@@ -34,7 +34,7 @@ const accessChat = asyncHandler(async (req, res) => {
   if (chat) {
     return res
       .status(200)
-      .json(new ApiResponse(200, chat, "Chat found or resumed"));
+      .json(new ApiResponse(200, chat, "Chat found"));
   }
 
   // If chat doesn't exist, create new
@@ -50,24 +50,6 @@ const accessChat = asyncHandler(async (req, res) => {
   res.status(201).json(new ApiResponse(201, fullChat, "New chat created"));
 });
  
-/**
- * Get full details of a single chat by ID
- */
-const getSingleChatById = asyncHandler(async (req, res) => {
-  const { chatId } = req.params;
-
-  const chat = await Chat.findById(chatId)
-    .populate("participants", "-password");
-
-  if (!chat) throw new ApiError(404, "Chat not found");
-
-  const messages = await Message.find({ chat: chatId })
-  .sort({ createdAt: 1 })
-  .populate("sender", "fullName username email avatar");
-
-
-  res.status(200).json(new ApiResponse(200, {chat,messages}));
-});
 
 /**
  * Leave a group chat (only applies to groups)
@@ -118,9 +100,7 @@ const getMyGroupsOnly = asyncHandler(async (req, res) => {
 export {
   getAllMyChats,
   accessChat,
-  getSingleChatById,
   leaveGroupChat,
   deleteChat,
   getMyGroupsOnly,
-
 };

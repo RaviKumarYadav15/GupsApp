@@ -17,6 +17,7 @@ import { clearChatState, selectChat } from '../../features/chat/chatSlice.js';
 const Sidebar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const { user, otherUsers, isAuthenticated } = useSelector(state => state.auth);
   const { chats } = useSelector(state => state.chat);
 
@@ -30,20 +31,21 @@ const Sidebar = () => {
       const chat = await dispatch(accessChatThunk(receiverId)).unwrap();
       dispatch(selectChat(chat));
     } catch (error) {
-      toast.error("Error accessing chat",error);
+      toast.error("Error accessing chat", error);
     }
   };
 
-  //note:🔥 .unwrap() solves two problems:
-  // ✅ Gives you direct access to payload (i.e., your returned data)
-  // ❌ Automatically throws an error if the thunk was rejected — so you can try/catch like normal async/await
-
   /*
-  🔍 When Do You Need .unwrap()?
-  Only if:
-  You want to use the result immediately in the component
-  You want to catch errors using try/catch
-  You want to control additional side effects manually 
+    //note:🔥 .unwrap() solves two problems:
+    // ✅ Gives you direct access to payload (i.e., your returned data)
+    // ❌ Automatically throws an error if the thunk was rejected — so you can try/catch like normal async/await
+  
+    
+    🔍 When Do You Need .unwrap()?
+    Only if:
+    You want to use the result immediately in the component
+    You want to catch errors using try/catch
+    You want to control additional side effects manually 
   */
 
   const handleLogout = async () => {
@@ -54,7 +56,7 @@ const Sidebar = () => {
       toast.success('Logged out successfully!');
       navigate('/login');
     } catch (error) {
-      toast.error('Logout failed!',error);
+      toast.error('Logout failed!', error);
     }
   };
 
@@ -63,7 +65,7 @@ const Sidebar = () => {
       dispatch(getOtherUsersThunk());
       dispatch(fetchMyChatsThunk());
     }
-  }, [isAuthenticated, otherUsers, showAllOtherUser, dispatch,chats]);
+  }, [isAuthenticated, otherUsers, showAllOtherUser, dispatch, chats]);
 
   const filteredUsers = Array.isArray(otherUsers)
     ? otherUsers.filter(
@@ -73,9 +75,17 @@ const Sidebar = () => {
     )
     : [];
 
-  
   const filteredChats = chats.filter(chat => {
     if (!user || !Array.isArray(chat.participants)) return false;
+
+    if (chat.isGroup) {
+      const groupNameMatch = chat.name?.toLowerCase().includes(chatSearch.toLowerCase());
+
+      const participantsMatch = chat.participants.some(
+        p => p._id !== user._id && p.fullName.toLowerCase().includes(chatSearch.toLowerCase())
+      );
+      return groupNameMatch || participantsMatch;
+    }
     const otherUser = chat.participants.find(p => p._id !== user._id);
     return otherUser?.fullName.toLowerCase().includes(chatSearch.toLowerCase());
   });

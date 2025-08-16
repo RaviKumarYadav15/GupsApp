@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectChat } from '../../features/chat/chatSlice';
 
@@ -7,22 +7,47 @@ const ChatCard = ({ chat, currentUserId }) => {
   const { selectedChat } = useSelector(state => state.chat);
   const { onlineUsers } = useSelector(state => state.socket);
 
-  const otherUser = chat.participants.find(p => p._id !== currentUserId);
-  const isSelected = selectedChat?._id === chat._id;
-  const isOnline = onlineUsers.includes(otherUser._id); 
+  const lastSelectedChat = useRef(null);
+  const isSelected = selectedChat?._id == chat._id;
 
-  if (!otherUser) return null;
+
+  let displayName, displayAvatar, isOnline, subText;
+
+  if (chat.isGroup) {
+    displayName = chat.name || "Unknown Group";
+    displayAvatar = "/default_group.png";
+    subText = `${chat.participants.length} members`
+    isOnline = false;
+  }
+  else {
+    const otherUser = chat.participants.find(p => p._id !== currentUserId);
+    if (!otherUser) return null;
+
+    displayName = otherUser.fullname;
+    displayAvatar = otherUser.avatar || "/default_user.png";
+    subText = otherUser.username;
+    isOnline = onlineUsers.includes(otherUser._id);
+  }
+
+  const handleSelect = () => {
+    if (lastSelectedChat.current?._id !== chat._id) {
+      dispatch(selectChat(chat));
+      lastSelectedChat.current = chat;
+    }
+    // prevents re-dispatch if same chat 
+    // is clicked repeatedly
+  };
 
   return (
     <div
-      onClick={() => dispatch(selectChat(chat))}
+      onClick={handleSelect}
       className={`cursor-pointer rounded-md px-2 py-1 transition hover:bg-gray-700 ${isSelected ? 'bg-gray-700' : ''}`}
     >
       <div className='flex items-center gap-2'>
         <div className="relative w-10 h-10">
           <img
-            src={otherUser.avatar || '/default_user.png'}
-            alt={otherUser.fullName}
+            src={displayAvatar}
+            alt={displayName}
             className="w-full h-full rounded-full object-cover"
           />
           {isOnline && (
@@ -30,8 +55,10 @@ const ChatCard = ({ chat, currentUserId }) => {
           )}
         </div>
         <div className='flex flex-col'>
-          <span className='text-sm font-medium'>{otherUser.fullName}</span>
-          <span className='text-xs text-gray-400'>{otherUser.username}</span>
+          <span className='text-sm font-medium'>{displayName}</span>
+          <span className='text-xs text-gray-400'>
+            {subText}
+          </span>
         </div>
       </div>
     </div>

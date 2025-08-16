@@ -22,6 +22,11 @@ io.on("connection", (socket)=>{
     socket.on("joinChat", (chatId) => {
         socket.join(chatId);
     });
+
+    socket.on("leaveChat", (chatId) => {
+    socket.leave(chatId);
+    console.log(`User ${userId} left chat ${chatId}`);
+    });
     
     socket.on("typing", ({chatId, userId})=>{
         socket.to(chatId).emit("typing", {chatId,userId});

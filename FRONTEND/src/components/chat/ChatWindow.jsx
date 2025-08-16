@@ -1,9 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
 import ChatHeader from './ChatHeader';
 import MessageBubble from './MessageBubble';
 import MessageInput from './MessageInput';
+
 import { fetchMessagesThunk} from '../../features/message/messageThunks';
+
 import {addTypingUser, removeTypingUser} from '../../features/message/messageSlice.js'
 
 const ChatWindow = () => {
@@ -12,6 +15,7 @@ const ChatWindow = () => {
   const { messages,typingUsers} = useSelector(state => state.message);
   const {socket}  = useSelector(state => state.socket);
   const messagesEndRef = useRef();
+  const prevChatRef = useRef(null);
 
   useEffect(() => {
     if (selectedChat?._id) {
@@ -25,10 +29,16 @@ const ChatWindow = () => {
 
   useEffect(()=>{
     if(!socket || !selectedChat?._id) return;
-    socket.emit("joinChat", selectedChat._id);
 
+    if(prevChatRef.current){
+      socket.emit("leaveChat",prevChatRef.current);             
+      //leaving the previous joined chat
+    }
+
+    socket.emit("joinChat", selectedChat._id);
+    prevChatRef.current = selectedChat._id
+;
     const handleTyping = ({chatId, userId})=>{
-      
       dispatch(addTypingUser({chatId,userId}))
     }
 
@@ -40,10 +50,19 @@ const ChatWindow = () => {
     socket.on('stopTyping',handleStopTyping);
 
     return ()=>{
+      if(selectedChat._id){
+        socket.emit("leaveChat",selectedChat._id);
+      }
       socket.off('typing', handleTyping);
       socket.off("stopTyping", handleStopTyping);
     };
   },[socket,selectedChat,dispatch]);
+  
+  console.log(selectedChat);
+  const currentTypingUsersName = (typingUsers[selectedChat?._id] || []).map((id)=>{
+    const user = selectedChat?.participants?.find(u => u._id === id);
+    return user ? user.username: "Anonymous";
+  });
 
   if (!selectedChat) {
     return (
@@ -53,11 +72,6 @@ const ChatWindow = () => {
     );
   }
 
-  const currentTypingUsersName = (typingUsers[selectedChat._id] || []).map((id)=>{
-    const user = selectedChat.participants.find(u => u._id === id);
-    return user ? user.username: "Anonymous";
-  });
-
   return (
     <div className="flex flex-col h-full flex-1">
       <ChatHeader />
@@ -65,8 +79,6 @@ const ChatWindow = () => {
         {messages.map(msg => (
           <MessageBubble key={msg._id} message={msg} />
         ))}
-        <div ref={messagesEndRef} />
-
         {
           currentTypingUsersName.length>0 && (
             <div className='text-sm text-gray-300 italic'>
@@ -75,6 +87,7 @@ const ChatWindow = () => {
           )
         }
       </div>
+      <div ref={messagesEndRef} />
       <MessageInput />
     </div>
   );

@@ -1,8 +1,6 @@
 import { Message } from "../models/Message.model.js";
 import { Chat } from "../models/Chat.model.js";
-import { User } from "../models/User.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { getSocketId, io } from "../socket/socket.js";
@@ -13,12 +11,10 @@ const sendMessage = asyncHandler(async (req, res) => {
   const sender = req.user._id;
 
   let fileUrl = "";
-  console.log(req.file);
   if (req.file) {
     const uploaded = await uploadOnCloudinary(req.file.path);
     fileUrl = uploaded?.url;
   }
-  console.log(fileUrl)
 
   const message = await Message.create({
     sender,
