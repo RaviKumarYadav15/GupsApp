@@ -16,6 +16,11 @@ const ChatWindow = () => {
   const {socket}  = useSelector(state => state.socket);
   const messagesEndRef = useRef();
   const prevChatRef = useRef(null);
+  
+  const currentTypingUsersName = (typingUsers[selectedChat?._id] || []).map((id)=>{
+    const user = selectedChat?.participants?.find(u => u._id === id);
+    return user ? user.username: "Anonymous";
+  });
 
   useEffect(() => {
     if (selectedChat?._id) {
@@ -25,7 +30,7 @@ const ChatWindow = () => {
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [messages,currentTypingUsersName.length]);
 
   useEffect(()=>{
     if(!socket || !selectedChat?._id) return;
@@ -62,10 +67,6 @@ const ChatWindow = () => {
     };
   },[socket,selectedChat,dispatch]);
   
-  const currentTypingUsersName = (typingUsers[selectedChat?._id] || []).map((id)=>{
-    const user = selectedChat?.participants?.find(u => u._id === id);
-    return user ? user.username: "Anonymous";
-  });
 
   if (!selectedChat) {
     return (
@@ -89,8 +90,8 @@ const ChatWindow = () => {
             </div>
           )
         }
+        <div ref={messagesEndRef} />
       </div>
-      <div ref={messagesEndRef} />
       <MessageInput />
     </div>
   );
