@@ -10,7 +10,7 @@ const socketSlice = createSlice({
   initialState,
   reducers: {
     initializeSocket: (state,action) => {
-      const socket = io("http://localhost:8000",{
+      const socket = io(import.meta.env.BACKEND_URL,{
         query:{
           userId:action.payload,
         }

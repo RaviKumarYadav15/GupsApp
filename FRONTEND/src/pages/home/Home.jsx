@@ -14,7 +14,7 @@ const Home = () => {
   useEffect(()=>{
     if(!isAuthenticated) return ;
     dispatch(initializeSocket(user?._id));
-  },[isAuthenticated,dispatch,user._id])
+  },[isAuthenticated,dispatch,user?._id])
 
   useEffect(()=>{
     if (!socket) return;

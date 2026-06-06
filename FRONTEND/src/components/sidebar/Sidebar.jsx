@@ -178,7 +178,7 @@ const Sidebar = () => {
               alt={user?.fullName}
               className="w-full h-full rounded-full object-cover"
             />
-            <span className="absolute top-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-[#1f2b2e] bg-green-400"></span>
+            <span className="absolute top-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-[#1f2b2e] bg-violet-400"></span>
           </div>
           <div className="text-sm leading-4">
             <p className="font-medium">{user?.fullName}</p>
