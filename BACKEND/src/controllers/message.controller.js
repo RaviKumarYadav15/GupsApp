@@ -13,7 +13,7 @@ const sendMessage = asyncHandler(async (req, res) => {
   let fileUrl = "";
   if (req.file) {
     const uploaded = await uploadOnCloudinary(req.file.path);
-    fileUrl = uploaded?.url;
+    fileUrl = uploaded?.secure_url;
   }
 
   const message = await Message.create({

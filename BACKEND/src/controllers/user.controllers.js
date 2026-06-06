@@ -50,13 +50,15 @@ const register = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Failed to upload image");
   }
 
+  const avatarSecureUrl = avatarUpload ? avatarUpload.secure_url : "";
+
   const newUser = await User.create({
     username,
     fullName,
     email,
     password,
     gender,
-    avatar: avatarUpload?.url || ""
+    avatar: avatarSecureUrl,
   });
 
   // Generate tokens after successful registration
