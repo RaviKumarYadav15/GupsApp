@@ -7,13 +7,21 @@ import {
   getOtherUsersThunk 
 } from './authThunks';
 
+let savedUser = null;
+try {
+  savedUser = JSON.parse(localStorage.getItem("user") || "null");
+} catch (e) {
+  console.error("Failed to parse user from local storage", e);
+}
+const hasSession = localStorage.getItem("hasSession") === "true";
+
 const slice = createSlice({
   name: 'auth',
   initialState: {
-    user: null,
-    isAuthenticated: false,
+    user: savedUser,
+    isAuthenticated: hasSession && !!savedUser,
     otherUsers:[],
-    authLoading: true,
+    authLoading: false, // Never show full-screen loader on refresh if we have a session
     dataLoading: false,
     error: null,
   },
@@ -56,7 +64,7 @@ const slice = createSlice({
       })
 
       .addCase(getProfileThunk.pending, (s) => { 
-        s.authLoading = true;
+        // Do not set authLoading to true here, we want to render optimistically
         s.error = null;
       })
       .addCase(getProfileThunk.fulfilled, (s, a) => {
