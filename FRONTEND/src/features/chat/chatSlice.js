@@ -8,12 +8,20 @@ try {
   console.error("Failed to parse selectedChat from local storage", e);
 }
 
+let savedUnreadCounts = {};
+try {
+  savedUnreadCounts = JSON.parse(localStorage.getItem("unreadCounts") || "{}");
+} catch (e) {
+  console.error("Failed to parse unreadCounts", e);
+}
+
 const chatSlice = createSlice({
   name: 'chat',
   
   initialState: {
     chats: [],
     selectedChat: savedSelectedChat,
+    unreadCounts: savedUnreadCounts,
     loading: false,
     error: null
   },
@@ -23,15 +31,29 @@ const chatSlice = createSlice({
       state.selectedChat = action.payload;
       if (action.payload) {
         localStorage.setItem("selectedChat", JSON.stringify(action.payload));
+        if (state.unreadCounts[action.payload._id]) {
+          delete state.unreadCounts[action.payload._id];
+          localStorage.setItem("unreadCounts", JSON.stringify(state.unreadCounts));
+        }
       } else {
         localStorage.removeItem("selectedChat");
       }
     },
+    incrementUnreadCount: (state, action) => {
+      const chatId = action.payload;
+      if (!state.unreadCounts[chatId]) {
+        state.unreadCounts[chatId] = 0;
+      }
+      state.unreadCounts[chatId] += 1;
+      localStorage.setItem("unreadCounts", JSON.stringify(state.unreadCounts));
+    },
     clearChatState: () => {
       localStorage.removeItem("selectedChat");
+      localStorage.removeItem("unreadCounts");
       return {
         chats: [],
         selectedChat: null,
+        unreadCounts: {},
         loading: false,
         error: null
       };
@@ -62,5 +84,5 @@ const chatSlice = createSlice({
   }
 });
 
-export const { selectChat, clearChatState } = chatSlice.actions;
+export const { selectChat, clearChatState, incrementUnreadCount } = chatSlice.actions;
 export default chatSlice.reducer;

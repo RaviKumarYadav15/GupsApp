@@ -4,6 +4,7 @@ import Sidebar from '../../components/sidebar/Sidebar';
 import ChatWindow from '../../components/chat/ChatWindow.jsx';
 import { initializeSocket, setOnlineUsers } from '../../features/socket/socketSlice.js';
 import { addNewMessage } from '../../features/message/messageSlice.js';
+import { incrementUnreadCount } from '../../features/chat/chatSlice.js';
 
 const Home = () => {
   const {isAuthenticated} = useSelector(state=>state.auth);
@@ -25,7 +26,10 @@ const Home = () => {
     });
 
     socket.on("newMessage", (newMessage)=>{
-      if (!selectedChat || newMessage.chat._id !== selectedChat._id) return;
+      if (!selectedChat || newMessage.chat._id !== selectedChat._id) {
+        dispatch(incrementUnreadCount(newMessage.chat._id));
+        return;
+      }
       dispatch(addNewMessage(newMessage));
     })
     return () => {
