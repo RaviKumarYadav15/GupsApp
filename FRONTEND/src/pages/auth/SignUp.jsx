@@ -76,7 +76,7 @@ const SignUp = () => {
     <div className='min-h-screen bg-gray-900 flex flex-col md:flex-row items-center justify-center gap-12 p-4'>
       
       {/* Intro/Branding Section */}
-      <div className='text-center md:text-left hidden md:block'>
+      <div className='text-center md:text-left'>
         <div className='flex items-center justify-center md:justify-start gap-4 mb-4'>
           <IoChatboxEllipsesOutline className='text-6xl text-[#574ae2]' />
           <p className='text-6xl font-bold text-white'>GupsApp</p>
