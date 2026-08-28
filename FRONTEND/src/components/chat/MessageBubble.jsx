@@ -20,6 +20,8 @@ const MessageBubble = ({ message }) => {
     })
     : 'Time unknown';
 
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+
   return (
     <div className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}>
       <div className="flex flex-col max-w-[70%]">
@@ -45,7 +47,8 @@ const MessageBubble = ({ message }) => {
               <img
                 src={message.file}
                 alt="attachment"
-                className="max-w-full max-h-60 rounded-md object-contain"
+                onClick={() => setIsModalOpen(true)}
+                className="max-w-full max-h-60 rounded-md object-contain cursor-pointer hover:opacity-90 transition-opacity"
               />
             </div>
           )}
@@ -53,8 +56,29 @@ const MessageBubble = ({ message }) => {
             {formattedTime} 
           </div>
         </div>
-
       </div>
+
+      {isModalOpen && message.file && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+          onClick={() => setIsModalOpen(false)}
+        >
+          <div className="relative max-w-4xl w-full flex justify-center">
+            <button 
+              className="absolute -top-10 right-0 text-white hover:text-gray-300 text-3xl font-bold"
+              onClick={() => setIsModalOpen(false)}
+            >
+              &times;
+            </button>
+            <img
+              src={message.file}
+              alt="fullscreen attachment"
+              className="max-w-full max-h-[85vh] object-contain rounded-md"
+              onClick={(e) => e.stopPropagation()} // Prevent closing when clicking the image itself
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
