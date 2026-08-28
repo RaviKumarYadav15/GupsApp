@@ -35,36 +35,9 @@ const ChatWindow = () => {
   useEffect(()=>{
     if(!socket || !selectedChat?._id) return;
 
-    // if(prevChatRef.current){
-    //   socket.emit("leaveChat",prevChatRef.current);             
-    //   //leaving the previous joined chat
-    // }
-    if(prevChatRef.current && prevChatRef.current !== selectedChat._id){
-      socket.emit("leaveChat", prevChatRef.current);
-    }
-
-
-    socket.emit("joinChat", selectedChat._id);
-    prevChatRef.current = selectedChat._id
-;
-    const handleTyping = ({chatId, userId})=>{
-      dispatch(addTypingUser({chatId,userId}))
-    }
-
-    const handleStopTyping = ({chatId,userId})=>{
-      dispatch(removeTypingUser({chatId,userId}));
-    }
-
-    socket.on('typing', handleTyping);
-    socket.on('stopTyping',handleStopTyping);
-
-    return ()=>{
-      if(selectedChat._id){
-        socket.emit("leaveChat",selectedChat._id);
-      }
-      socket.off('typing', handleTyping);
-      socket.off("stopTyping", handleStopTyping);
-    };
+    // ChatWindow no longer manages socket joining/leaving or typing listeners.
+    // This is now handled globally in Home.jsx and Sidebar.jsx
+    
   },[socket,selectedChat,dispatch]);
   
 

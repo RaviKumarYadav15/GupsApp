@@ -69,6 +69,13 @@ const Sidebar = () => {
     }
   }, [isAuthenticated, otherUsers, dispatch, chats]);
 
+  const { socket } = useSelector(state => state.socket);
+  useEffect(() => {
+    if (socket && chats?.length > 0) {
+      chats.forEach(chat => socket.emit("joinChat", chat._id));
+    }
+  }, [socket, chats]);
+
   const filteredUsers = useMemo(() => {
     return Array.isArray(otherUsers)
       ? otherUsers.filter(

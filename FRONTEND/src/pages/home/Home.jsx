@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Sidebar from '../../components/sidebar/Sidebar';
 import ChatWindow from '../../components/chat/ChatWindow.jsx';
 import { initializeSocket, setOnlineUsers } from '../../features/socket/socketSlice.js';
-import { addNewMessage } from '../../features/message/messageSlice.js';
+import { addNewMessage, addTypingUser, removeTypingUser } from '../../features/message/messageSlice.js';
 import { incrementUnreadCount } from '../../features/chat/chatSlice.js';
 
 const Home = () => {
@@ -31,10 +31,24 @@ const Home = () => {
         return;
       }
       dispatch(addNewMessage(newMessage));
-    })
+    });
+
+    const handleTyping = ({chatId, userId})=>{
+      dispatch(addTypingUser({chatId,userId}))
+    }
+
+    const handleStopTyping = ({chatId,userId})=>{
+      dispatch(removeTypingUser({chatId,userId}));
+    }
+
+    socket.on('typing', handleTyping);
+    socket.on('stopTyping', handleStopTyping);
+
     return () => {
       socket.off("onlineUsers");
       socket.off("newMessage");
+      socket.off("typing", handleTyping);
+      socket.off("stopTyping", handleStopTyping);
     }
   },[socket, selectedChat, dispatch])
 

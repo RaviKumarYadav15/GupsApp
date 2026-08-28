@@ -6,9 +6,14 @@ const ChatCard = ({ chat, currentUserId }) => {
   const dispatch = useDispatch();
   const { selectedChat, unreadCounts } = useSelector(state => state.chat);
   const { onlineUsers } = useSelector(state => state.socket);
+  const { typingUsers } = useSelector(state => state.message);
 
   const isSelected = selectedChat?._id == chat._id;
   const unreadCount = unreadCounts?.[chat._id] || 0;
+  
+  const currentTypingUsers = typingUsers[chat._id] || [];
+  // Exclude current user from typing just in case
+  const isSomeoneTyping = currentTypingUsers.some(id => id !== currentUserId);
 
 
   let displayName, displayAvatar, isOnline, subText;
@@ -50,9 +55,11 @@ const ChatCard = ({ chat, currentUserId }) => {
         </div>
         <div className='flex flex-col flex-1 overflow-hidden'>
           <span className='text-sm font-medium truncate'>{displayName}</span>
-          <span className='text-xs text-gray-400 truncate'>
-            {subText}
-          </span>
+          {isSomeoneTyping ? (
+            <span className='text-xs text-green-400 font-semibold italic truncate'>typing...</span>
+          ) : (
+            <span className='text-xs text-gray-400 truncate'>{subText}</span>
+          )}
         </div>
         {unreadCount > 0 && (
           <div className="flex-shrink-0 w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center text-[10px] font-bold text-white">
