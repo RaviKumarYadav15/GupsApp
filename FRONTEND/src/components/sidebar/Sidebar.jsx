@@ -13,6 +13,7 @@ import { getOtherUsersThunk, logoutThunk } from '../../features/auth/authThunks.
 
 import { clearMessages } from '../../features/message/messageSlice.js';
 import { clearChatState, selectChat } from '../../features/chat/chatSlice.js';
+import { disconnectSocket } from '../../features/socket/socketSlice.js';
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -52,6 +53,7 @@ const Sidebar = () => {
     try {
       dispatch(clearMessages());
       dispatch(clearChatState());
+      dispatch(disconnectSocket());
       await dispatch(logoutThunk()).unwrap();
       toast.success('Logged out successfully!');
       navigate('/login');

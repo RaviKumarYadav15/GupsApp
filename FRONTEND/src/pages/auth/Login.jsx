@@ -9,15 +9,15 @@ import { toast } from 'react-toastify';
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { loading, isAuthenticated } = useSelector(state => state.auth);
+  const { authLoading, isAuthenticated } = useSelector(state => state.auth);
 
   const [formData, setFormData] = useState({ email: '', password: '' });
 
   useEffect(() => {
-    if (!loading && isAuthenticated) {
+    if (!authLoading && isAuthenticated) {
       navigate("/");
     }
-  }, [isAuthenticated, loading, navigate]);
+  }, [isAuthenticated, authLoading, navigate]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -27,7 +27,7 @@ const Login = () => {
     if (isAuthenticated) {
       navigate("/");
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,7 +42,7 @@ const Login = () => {
   };
 
 
-  if (loading) {
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center text-white text-lg gap-4">
         <p className='text-6xl'>GupsApp</p>
@@ -87,7 +87,7 @@ const Login = () => {
         </label>
 
         <button type="submit" className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg font-medium">
-          {loading ? 'Logging in...' : 'Login'}
+          {authLoading ? 'Logging in...' : 'Login'}
         </button>
 
         <div className="text-center text-white">

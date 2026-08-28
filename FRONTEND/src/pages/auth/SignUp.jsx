@@ -14,14 +14,14 @@ const SignUp = () => {
   const [avatar, setAvatar] = useState("./default_user.png");
   const [preview, setPreview] = useState(null);
 
-  const { isAuthenticated, loading } = useSelector((state) => state.auth)
+  const { isAuthenticated, authLoading } = useSelector((state) => state.auth)
 
   // profile is loaded and user is authenticated, redirect to home
   useEffect(() => {
-    if (!loading && isAuthenticated) {
+    if (!authLoading && isAuthenticated) {
       navigate("/");
     }
-  }, [isAuthenticated, loading, navigate]);
+  }, [isAuthenticated, authLoading, navigate]);
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -70,7 +70,7 @@ const SignUp = () => {
     }
   };
 
-  if (loading) {
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center text-white text-lg gap-4">
         <p className='text-6xl'>GupsApp</p>

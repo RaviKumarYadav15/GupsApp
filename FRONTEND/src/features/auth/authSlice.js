@@ -13,9 +13,14 @@ const slice = createSlice({
     user: null,
     isAuthenticated: false,
     otherUsers:[],
-    authLoading: false,
+    authLoading: true,
     dataLoading: false,
     error: null,
+  },
+  reducers: {
+    setAuthLoading: (state, action) => {
+      state.authLoading = action.payload;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -89,4 +94,5 @@ const slice = createSlice({
   },
 });
 
+export const { setAuthLoading } = slice.actions;
 export default slice.reducer;

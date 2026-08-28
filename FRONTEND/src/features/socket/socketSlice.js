@@ -9,10 +9,13 @@ const socketSlice = createSlice({
   name: 'socket',
   initialState,
   reducers: {
-    initializeSocket: (state,action) => {
-      const socket = io("http://localhost:8000",{
-        query:{
-          userId:action.payload,
+    initializeSocket: (state, action) => {
+      if (state.socket) {
+        state.socket.close();
+      }
+      const socket = io("http://localhost:8000", {
+        query: {
+          userId: action.payload,
         }
       });
       state.socket = socket;
@@ -20,8 +23,14 @@ const socketSlice = createSlice({
     setOnlineUsers: (state, action) => {
       state.onlineUsers = action.payload;
     },
+    disconnectSocket: (state) => {
+      if (state.socket) {
+        state.socket.close();
+        state.socket = null;
+      }
+    },
   },
 });
 
-export const { initializeSocket,setOnlineUsers } = socketSlice.actions;
+export const { initializeSocket, setOnlineUsers, disconnectSocket } = socketSlice.actions;
 export default socketSlice.reducer;

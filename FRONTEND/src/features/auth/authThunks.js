@@ -6,6 +6,7 @@ export const loginThunk = createAsyncThunk(
   async (data, { rejectWithValue }) => {
     try {
       const res = await loginUser(data);
+      localStorage.setItem("hasSession", "true");
       return res.data.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message);
@@ -17,6 +18,7 @@ export const signupThunk = createAsyncThunk(
   async (formData, { rejectWithValue }) => {
     try {
       const res = await registerUser(formData);
+      localStorage.setItem("hasSession", "true");
       return res.data.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message);
@@ -28,8 +30,10 @@ export const logoutThunk = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const res = await logoutUser();
+      localStorage.removeItem("hasSession");
       return res.data.message;
     } catch (err) {
+      localStorage.removeItem("hasSession");
       return rejectWithValue(err.response?.data?.message || "Logout failed");
     }
   }
@@ -40,8 +44,10 @@ export const getProfileThunk = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const res = await getProfile();
+      localStorage.setItem("hasSession", "true");
       return res.data.data;
     } catch (err) {
+      localStorage.removeItem("hasSession");
       return rejectWithValue(err.response?.data?.message || 'Failed to fetch profile');
     }
   }

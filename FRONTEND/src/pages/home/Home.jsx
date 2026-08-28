@@ -16,6 +16,8 @@ const Home = () => {
     dispatch(initializeSocket(user?._id));
   },[isAuthenticated,dispatch,user._id])
 
+  const { selectedChat } = useSelector(state => state.chat);
+
   useEffect(()=>{
     if (!socket) return;
     socket.on("onlineUsers", (onlineUsers) => {
@@ -23,12 +25,14 @@ const Home = () => {
     });
 
     socket.on("newMessage", (newMessage)=>{
+      if (!selectedChat || newMessage.chat._id !== selectedChat._id) return;
       dispatch(addNewMessage(newMessage));
     })
     return () => {
-      socket.close();
+      socket.off("onlineUsers");
+      socket.off("newMessage");
     }
-  },[socket])
+  },[socket, selectedChat, dispatch])
 
   return (
     <div className="flex h-screen">
