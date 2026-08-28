@@ -13,7 +13,9 @@ const socketSlice = createSlice({
       if (state.socket) {
         state.socket.close();
       }
-      const socket = io(import.meta.env.VITE_BACKEND_URL || import.meta.env.BACKEND_URL || "http://localhost:8000", {
+      const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL || "";
+      const fallbackUrl = baseUrl ? baseUrl.replace("/api/v1", "") : "http://localhost:8000";
+      const socket = io(import.meta.env.VITE_BACKEND_URL || fallbackUrl, {
         query: {
           userId: action.payload,
         }
