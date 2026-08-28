@@ -1,9 +1,13 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectChat } from '../../features/chat/chatSlice';
+import { IoArrowBack } from 'react-icons/io5';
 
 const ChatHeader = () => {
   const { selectedChat } = useSelector(state => state.chat);
   const { user } = useSelector(state => state.auth);
+
+  const dispatch = useDispatch();
 
   if (!selectedChat || !user) return null;
 
@@ -24,6 +28,12 @@ const ChatHeader = () => {
 
   return (
     <div className="p-3 border-b border-gray-700 bg-[#1f2b2e] flex items-center gap-3">
+      <button 
+        onClick={() => dispatch(selectChat(null))}
+        className="md:hidden text-white mr-1 hover:text-gray-300"
+      >
+        <IoArrowBack size={24} />
+      </button>
       <img
         src={displayAvatar}
         alt={displayName}

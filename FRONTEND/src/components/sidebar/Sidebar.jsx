@@ -94,7 +94,7 @@ const Sidebar = () => {
   }, [chats, user, chatSearch]);
 
   return (
-    <div className='bg-[#1f2b2e] text-white w-full max-w-80 h-screen p-4 flex flex-col gap-4'>
+    <div className='bg-[#1f2b2e] text-white w-full h-full p-4 flex flex-col gap-4 border-r border-gray-700'>
 
       {/* Header */}
       <div className='flex items-center gap-4'>
