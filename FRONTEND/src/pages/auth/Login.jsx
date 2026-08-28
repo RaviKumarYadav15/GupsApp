@@ -45,8 +45,17 @@ const Login = () => {
   // Removed full screen spinner to show button loading state instead
 
   return (
-    <div className='min-h-screen bg-gray-900 flex items-center justify-center'>
-      <form onSubmit={handleSubmit} className='bg-black/40 backdrop-blur-md p-8 rounded-2xl shadow-md w-[24rem] space-y-6 border border-white/40'>
+    <div className='min-h-screen bg-gray-900 flex flex-col md:flex-row items-center justify-center gap-12 p-4'>
+      
+      {/* Intro/Branding Section */}
+      <div className='text-center md:text-left hidden md:block'>
+        <div className='flex items-center justify-center md:justify-start gap-3 mb-4'>
+          <p className='text-6xl font-bold text-white'>GupsApp</p>
+        </div>
+        <p className='text-xl text-gray-300 max-w-md'>Connect instantly with friends and family. Share your moments in real-time.</p>
+      </div>
+
+      <form onSubmit={handleSubmit} className='bg-black/40 backdrop-blur-md p-8 rounded-2xl shadow-md w-full max-w-[24rem] space-y-6 border border-white/40'>
         <div className="text-2xl font-bold text-center text-white">Login</div>
 
         <label className='flex items-center gap-3 p-2 border border-gray-300 rounded-xl'>
