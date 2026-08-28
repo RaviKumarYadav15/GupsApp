@@ -1,12 +1,19 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { fetchMyChatsThunk, accessChatThunk } from './chatThunks';
 
+let savedSelectedChat = null;
+try {
+  savedSelectedChat = JSON.parse(localStorage.getItem("selectedChat") || "null");
+} catch (e) {
+  console.error("Failed to parse selectedChat from local storage", e);
+}
+
 const chatSlice = createSlice({
   name: 'chat',
   
   initialState: {
     chats: [],
-    selectedChat: null,
+    selectedChat: savedSelectedChat,
     loading: false,
     error: null
   },
@@ -14,13 +21,21 @@ const chatSlice = createSlice({
   reducers: {
     selectChat: (state, action) => {
       state.selectedChat = action.payload;
+      if (action.payload) {
+        localStorage.setItem("selectedChat", JSON.stringify(action.payload));
+      } else {
+        localStorage.removeItem("selectedChat");
+      }
     },
-    clearChatState: () => ({
-      chats: [],
-      selectedChat: null,
-      loading: false,
-      error: null
-    })
+    clearChatState: () => {
+      localStorage.removeItem("selectedChat");
+      return {
+        chats: [],
+        selectedChat: null,
+        loading: false,
+        error: null
+      };
+    }
   },
 
   extraReducers: (builder) => {
@@ -42,6 +57,7 @@ const chatSlice = createSlice({
         const exists = state.chats.find(chat => chat._id === action.payload._id);
         if (!exists) state.chats.push(action.payload);
         state.selectedChat = action.payload;
+        localStorage.setItem("selectedChat", JSON.stringify(action.payload));
       });
   }
 });

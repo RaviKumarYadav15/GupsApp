@@ -36,10 +36,10 @@ const Home = () => {
 
   return (
     <div className="flex h-screen w-full bg-[#1a2528] overflow-hidden">
-      <div className={`w-full md:w-80 md:flex-shrink-0 h-full ${selectedChat ? 'hidden md:block' : 'block'}`}>
+      <div className={`w-full md:w-80 md:flex-shrink-0 h-full ${selectedChat ? 'hidden md:flex' : 'flex'}`}>
         <Sidebar />
       </div>
-      <div className={`flex-1 h-full ${selectedChat ? 'block' : 'hidden md:block'}`}>
+      <div className={`flex-1 h-full ${selectedChat ? 'flex' : 'hidden md:flex'} flex-col`}>
         <ChatWindow />
       </div>
     </div>

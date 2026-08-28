@@ -70,7 +70,7 @@ const ChatWindow = () => {
 
   if (!selectedChat) {
     return (
-      <div className="flex-1 flex items-center justify-center text-gray-400 text-lg">
+      <div className="flex-1 flex items-center justify-center text-gray-400 text-lg w-full h-full">
         Select a chat to start messaging
       </div>
     );
