@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { IoChatboxEllipsesOutline } from "react-icons/io5";
 import { LuUserRoundSearch } from "react-icons/lu";
 import { useDispatch, useSelector } from 'react-redux';
@@ -32,7 +32,7 @@ const Sidebar = () => {
       const chat = await dispatch(accessChatThunk(receiverId)).unwrap();
       dispatch(selectChat(chat));
     } catch (error) {
-      toast.error("Error accessing chat", error);
+      toast.error(error?.message || "Error accessing chat");
     }
   };
 
@@ -67,30 +67,31 @@ const Sidebar = () => {
       dispatch(getOtherUsersThunk());
       dispatch(fetchMyChatsThunk());
     }
-  }, [isAuthenticated, otherUsers, showAllOtherUser, dispatch, chats]);
+  }, [isAuthenticated, otherUsers, dispatch, chats]);
 
-  const filteredUsers = Array.isArray(otherUsers)
-    ? otherUsers.filter(
-      u =>
-        u._id !== user?._id &&
-        u.fullName.toLowerCase().includes(search.toLowerCase())
-    )
-    : [];
+  const filteredUsers = useMemo(() => {
+    return Array.isArray(otherUsers)
+      ? otherUsers.filter(
+          u => u._id !== user?._id && u.fullName.toLowerCase().includes(search.toLowerCase())
+        )
+      : [];
+  }, [otherUsers, user?._id, search]);
 
-  const filteredChats = chats.filter(chat => {
-    if (!user || !Array.isArray(chat.participants)) return false;
+  const filteredChats = useMemo(() => {
+    return chats.filter(chat => {
+      if (!user || !Array.isArray(chat.participants)) return false;
 
-    if (chat.isGroup) {
-      const groupNameMatch = chat.name?.toLowerCase().includes(chatSearch.toLowerCase());
-
-      const participantsMatch = chat.participants.some(
-        p => p._id !== user._id && p.fullName.toLowerCase().includes(chatSearch.toLowerCase())
-      );
-      return groupNameMatch || participantsMatch;
-    }
-    const otherUser = chat.participants.find(p => p._id !== user._id);
-    return otherUser?.fullName.toLowerCase().includes(chatSearch.toLowerCase());
-  });
+      if (chat.isGroup) {
+        const groupNameMatch = chat.name?.toLowerCase().includes(chatSearch.toLowerCase());
+        const participantsMatch = chat.participants.some(
+          p => p._id !== user._id && p.fullName.toLowerCase().includes(chatSearch.toLowerCase())
+        );
+        return groupNameMatch || participantsMatch;
+      }
+      const otherUser = chat.participants.find(p => p._id !== user._id);
+      return otherUser?.fullName.toLowerCase().includes(chatSearch.toLowerCase());
+    });
+  }, [chats, user, chatSearch]);
 
   return (
     <div className='bg-[#1f2b2e] text-white w-full max-w-80 h-screen p-4 flex flex-col gap-4'>
@@ -180,7 +181,7 @@ const Sidebar = () => {
               alt={user?.fullName}
               className="w-full h-full rounded-full object-cover"
             />
-            <span className="absolute top-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-[#1f2b2e] bg-green-400"></span>
+            <span className="absolute top-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-[#1f2b2e] bg-violet-400"></span>
           </div>
           <div className="text-sm leading-4">
             <p className="font-medium">{user?.fullName}</p>

@@ -14,7 +14,7 @@ const Home = () => {
   useEffect(()=>{
     if(!isAuthenticated) return ;
     dispatch(initializeSocket(user?._id));
-  },[isAuthenticated,dispatch,user._id])
+  },[isAuthenticated,dispatch,user?._id])
 
   const { selectedChat } = useSelector(state => state.chat);
 

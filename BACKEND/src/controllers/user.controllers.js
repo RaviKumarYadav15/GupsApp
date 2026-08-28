@@ -50,13 +50,15 @@ const register = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Failed to upload image");
   }
 
+  const avatarSecureUrl = avatarUpload ? avatarUpload.secure_url : "";
+
   const newUser = await User.create({
     username,
     fullName,
     email,
     password,
     gender,
-    avatar: avatarUpload?.url || ""
+    avatar: avatarSecureUrl,
   });
 
   // Generate tokens after successful registration
@@ -64,8 +66,8 @@ const register = asyncHandler(async (req, res) => {
 
   const options = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: "lax",
+    secure: true,
+    sameSite: "none",
     maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
   };
 
@@ -90,8 +92,8 @@ const login = asyncHandler(async (req, res) => {
 
   const options = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: "lax",
+    secure: true,
+    sameSite: "none",
     maxAge: 7 * 24 * 60 * 60 * 1000
   };
 

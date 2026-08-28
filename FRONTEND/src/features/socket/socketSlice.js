@@ -13,7 +13,7 @@ const socketSlice = createSlice({
       if (state.socket) {
         state.socket.close();
       }
-      const socket = io("http://localhost:8000", {
+      const socket = io(import.meta.env.VITE_BACKEND_URL || import.meta.env.BACKEND_URL || "http://localhost:8000", {
         query: {
           userId: action.payload,
         }
