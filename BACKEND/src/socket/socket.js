@@ -14,9 +14,11 @@ const userSocketMap = {}
 io.on("connection", (socket)=>{
     const userId = socket.handshake.query.userId;
     if(!userId) return ;
-
-        userSocketMap[userId] = socket.id;
-        io.emit("onlineUsers", Object.keys(userSocketMap));
+    if (!userSocketMap[userId]) {
+        userSocketMap[userId] = [];
+    }
+    userSocketMap[userId].push(socket.id);
+    io.emit("onlineUsers", Object.keys(userSocketMap));
     
     socket.on("joinChat", (chatId) => {
         socket.join(chatId);
@@ -24,8 +26,8 @@ io.on("connection", (socket)=>{
     });
 
     socket.on("leaveChat", (chatId) => {
-    socket.leave(chatId);
-    console.log(`User ${userId} left chat ${chatId}`);
+        socket.leave(chatId);
+        console.log(`User ${userId} left chat ${chatId}`);
     });
     
     socket.on("typing", ({chatId, userId})=>{
@@ -37,12 +39,17 @@ io.on("connection", (socket)=>{
     })
 
     socket.on("disconnect",()=>{
-        delete userSocketMap[userId];
-        io.emit("onlineUsers", Object.keys(userSocketMap))
+        if (userSocketMap[userId]) {
+            userSocketMap[userId] = userSocketMap[userId].filter(id => id !== socket.id);
+            if (userSocketMap[userId].length === 0) {
+                delete userSocketMap[userId];
+            }
+        }
+        io.emit("onlineUsers", Object.keys(userSocketMap));
     })
 })
 const getSocketId = (userId) => {
-    return userSocketMap[userId];
+    return userSocketMap[userId] || [];
 }   
 
 export { io, server, getSocketId }

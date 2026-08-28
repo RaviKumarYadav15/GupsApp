@@ -31,9 +31,11 @@ const sendMessage = asyncHandler(async (req, res) => {
 
   chat.participants.forEach(participant => {
     const participantId = participant._id.toString();
-    const socketId = getSocketId(participantId);
-    if (socketId) {
-      io.to(socketId).emit("newMessage", fullMessage);
+    const socketIds = getSocketId(participantId);
+    if (socketIds && socketIds.length > 0) {
+      socketIds.forEach(socketId => {
+        io.to(socketId).emit("newMessage", fullMessage);
+      });
     }
   });
   res.status(201).json(new ApiResponse(201, fullMessage, "Message sent"));
